@@ -7,12 +7,14 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float playerSpeed = 12;
 	[SerializeField] float jumpSpeed = 15;
 	[SerializeField] float wallJumpSpeed = 5;
-	[SerializeField] float movementDirection;
+	[SerializeField] float wallSlideSpeed = 5;
 	[SerializeField] int maxJumps = 2;
 
 	[Header("Player States")]
 	[SerializeField] int jumpCount = 0;
+	[SerializeField] float movementDirection;
 	[SerializeField] bool isGrounded = true;
+	[SerializeField] bool isWallSliding = false;
 	[SerializeField] bool isCrouching = false;
 
 	private Rigidbody2D rb;
@@ -37,6 +39,9 @@ public class PlayerController : MonoBehaviour {
 		//Check if the player is grounded
 		CheckGrounded();
 
+		//Check if the player is sliding on a wall
+		CheckWallSlide();
+
 		//Check for jumps
 		HandleJump();
 
@@ -51,7 +56,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void MovePlayer() {
+		//Horizontal movement
 		rb.velocity = new Vector2(movementDirection * playerSpeed, rb.velocity.y);
+
+		//Make sure the player isn't falling faster than the wall slide speed if he is wall sliding
+		if (isWallSliding && rb.velocity.y < -wallSlideSpeed) { rb.velocity = new Vector2 (rb.velocity.x, -wallSlideSpeed); }
 	}
 
 	private void HandleJump() {
@@ -68,7 +77,7 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetButtonDown("Jump") && !isGrounded) {
 			//Check what wall we are sliding on
 			//-1 indicates a right wall, 0 indicates no wall, 1 indicates a left wall
-			int wallPosition = FindWallSlide();
+			int wallPosition = CheckWallSlide();
 			if (wallPosition == 0) { return; }
 
 			Debug.Log(wallPosition);
@@ -95,21 +104,31 @@ public class PlayerController : MonoBehaviour {
 		return;
 	}
 
-	private int FindWallSlide() {
+	private int CheckWallSlide() {
+		//Make sure player is off the ground and is falling in the air
+		if(isGrounded == true || rb.velocity.y > 0) {
+			isWallSliding = false;
+			return 0;
+		}
+
 		//Distance between player pivot and the side of the player
 		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.1f;   //Needs a little offset so the ray actually hits walls
-
-		//Cast rays
-		//Check left wall 
-		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null) {
+		//Cast rays and make sure the proper button is being held
+		//Check right wall 
+		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") == 1) {
+			isWallSliding = true;
 			return -1;
 		}
-		//Check right wall
-		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null) {
+		//Check left wall
+		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") == -1) {
+			isWallSliding = true;
 			return 1;
 		}
 
 		//No walls found
-		else { return 0; }
+		else {
+			isWallSliding = false;
+			return 0;
+		}
 	}
 }
