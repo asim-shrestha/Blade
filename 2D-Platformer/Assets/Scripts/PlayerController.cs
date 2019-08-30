@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float jumpSpeed = 15;
 	[SerializeField] float wallJumpSpeed = 5;
 	[SerializeField] float wallSlideSpeed = 5;
+	[SerializeField] float variableJumpHeightMultiplier = 0.5f;
 	[SerializeField] int maxJumps = 2;
 
 	[Header("Player States")]
@@ -70,6 +71,17 @@ public class PlayerController : MonoBehaviour {
 			jumpCount++;
 			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 		}
+
+		//Wall jumping
+		else if (Input.GetButtonDown("Jump") && isWallSliding) {
+			Vector2 wallJumpDirection = new Vector2(1f, 1f).normalized;
+			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+		}
+
+		//Early jump release for variable jump height
+		if (Input.GetButtonUp("Jump")) {
+			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
+		}
 	}
 
 	private void WallJump() {
@@ -115,12 +127,12 @@ public class PlayerController : MonoBehaviour {
 		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.1f;   //Needs a little offset so the ray actually hits walls
 		//Cast rays and make sure the proper button is being held
 		//Check right wall 
-		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") == 1) {
+		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && Input.GetAxis("Horizontal") > 0) {
 			isWallSliding = true;
 			return -1;
 		}
 		//Check left wall
-		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") == -1) {
+		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && Input.GetAxis("Horizontal") < 0) {
 			isWallSliding = true;
 			return 1;
 		}
