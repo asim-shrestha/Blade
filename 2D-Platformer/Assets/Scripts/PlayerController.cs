@@ -5,9 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 	[SerializeField] float playerSpeed;
-	[SerializeField] float jumpSpeed;
+	[SerializeField] float minJumpSpeed;
+	[SerializeField] float maxJumpSpeed;
 	[SerializeField] Vector2 movementVector;
-	[SerializeField] bool isGrounded;
 	[SerializeField] bool isCrouching;
 
 	public Rigidbody2D rigidbody;
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     {
 		//Find what direction the movement is taking place based on input
 		movementVector = new Vector2(Input.GetAxis("Horizontal"), 0f);
-		//CheckGrounded();
+
 		//Check for jumps
 		Jump();
     }
@@ -41,19 +41,27 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void Jump() {
-		if (Input.GetButtonDown("Jump")) {
-			CheckGrounded();
-			rigidbody.velocity += (new Vector2(0f, 1f) * jumpSpeed);
+		//Check if the jump button's been pressed and if the player is grounded 
+		if (Input.GetButtonDown("Jump") && CheckGrounded()) {
+			rigidbody.velocity += (new Vector2(0f, 1f) * maxJumpSpeed);
 		}
 	}
 
 	private bool CheckGrounded() {
 		//Distance between object pivot and the bottom of the object
-		float distToGround = GetComponent<BoxCollider2D>().bounds.extents.y;
+		float distFromGround = GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f;	//Needs a little offset so the ray actually hits ground
 
-		//Cast ray
-		Debug.Log("test");
-		Debug.Log(Physics2D.Raycast((Vector2)transform.position, Vector2.down, distToGround + 5f).collider.name);
-		return isGrounded;
+		//Get layermask so ray does not intersect with player
+		int groundLayer = 9;
+		int layerMask = 1 << groundLayer;
+
+		//Cast ray and check if we found an object
+		if (Physics2D.Raycast(transform.position, Vector2.down, distFromGround, layerMask).collider != null)
+		{
+			return true;
+		}
+
+		//Ray didn't intersect so the player is not grounded
+		return false;
 	}
 }
