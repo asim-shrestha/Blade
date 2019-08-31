@@ -30,4 +30,9 @@ public class Bullet : MonoBehaviour
 		Instantiate(bulletParticles, transform.position, transform.rotation);
 		Destroy(this.gameObject);
 	}
+
+	private void OnTriggerStay2D(Collider2D collision) {
+		Instantiate(bulletParticles, transform.position, transform.rotation);
+		Destroy(this.gameObject);
+	}
 }

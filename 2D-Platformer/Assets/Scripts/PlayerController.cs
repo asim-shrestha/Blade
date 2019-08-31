@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] GameObject bullet;
 
 	[Header("Player States")]
+	[SerializeField] int health = 5;
 	[SerializeField] int direction = 1;
 	[SerializeField] int jumpCount = 0;
 	[SerializeField] int warpCount = 0;
@@ -217,10 +218,31 @@ public class PlayerController : MonoBehaviour {
 
 	private void HandleFire() {
 		if (Input.GetButtonDown("Fire2")) {
-			float bulletBounds = bullet.GetComponent<BoxCollider2D>().bounds.extents.x * 2;
-			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*3 ) * direction, transform.position.y);
+			//Calculate where the bullet will be fired
+			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*2 + 0.1f ) * direction, transform.position.y);
+
+			//Fire bullet and set direction
 			GameObject bulletClone = Instantiate(bullet, bulletPosition, transform.rotation);
 			bulletClone.transform.localScale = new Vector3(direction, 1, 1);
 		}
 	}
+
+	private void OnTriggerEnter2D(Collider2D collision) {
+		health--;
+		if (health <= 0) {
+			Destroy(this.gameObject);
+		}
+		else {
+			GetComponent<SpriteRenderer>().color = Color.white;
+			StartCoroutine(HitAnimation());
+
+		}
+	}
+
+	IEnumerator HitAnimation() {
+		GetComponent<SpriteRenderer>().color = Color.red;
+		yield return new WaitForSeconds(.1f);
+		GetComponent<SpriteRenderer>().color = Color.white;
+	}
+
 }
