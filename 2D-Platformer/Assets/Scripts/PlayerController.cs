@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float wallSlideSpeed = 5;
 	[SerializeField] float wallJumpForce = 15;
 	[SerializeField] Vector2 wallJumpDirection = new Vector2 (1f,1f);
+	[SerializeField] int maxBullets = 3;
 	[SerializeField] int maxJumps = 2;
 	[SerializeField] int maxWarps = 1;
 	[SerializeField] float warpDistance = 5;
@@ -23,8 +24,9 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] GameObject bullet;
 
 	[Header("Player States")]
-	[SerializeField] int health = 5;
+	[SerializeField] int health = 1;
 	[SerializeField] int direction = 1;
+	[SerializeField] int bulletCount = 0;
 	[SerializeField] int jumpCount = 0;
 	[SerializeField] int warpCount = 0;
 	[SerializeField] float movementDirection;
@@ -150,9 +152,9 @@ public class PlayerController : MonoBehaviour {
 	private void CheckGrounded() {
 		//Distance between player pivot and the bottom of the player
 		float distFromGround = GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f;   //Needs a little offset so the ray actually hits ground
-
+		Vector2 boxSize = new Vector2(GetComponent<BoxCollider2D>().bounds.extents.x * 2 - 0.1f, 0.01f);
 		//Cast ray and check if we found an object
-		if (Physics2D.Raycast(transform.position, Vector2.down, distFromGround, groundLayerMask).collider != null) {
+		if (Physics2D.BoxCast(transform.position, boxSize, 0f, Vector2.down, distFromGround, groundLayerMask).collider != null) {
 			isGrounded = true;
 			jumpCount = 0;
 			warpCount = 0;
@@ -218,10 +220,14 @@ public class PlayerController : MonoBehaviour {
 
 	private void HandleFire() {
 		if (Input.GetButtonDown("Fire2" + playerNumber)) {
+			//Check if there are bullets left
+			if(bulletCount >= maxBullets) { return; }
+
 			//Calculate where the bullet will be fired
 			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*2 + 0.1f ) * direction, transform.position.y);
 
 			//Fire bullet and set direction
+			bulletCount++;
 			GameObject bulletClone = Instantiate(bullet, bulletPosition, transform.rotation);
 			bulletClone.transform.localScale = new Vector3(direction, 1, 1);
 		}
