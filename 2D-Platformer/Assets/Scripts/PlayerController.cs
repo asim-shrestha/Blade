@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
+	[Header("Controller configuration")]
+	[SerializeField] string playerNumber = "";
+
 	[Header("Player configuration")]
 	[SerializeField] float movementSpeed = 12;
 	[SerializeField] float jumpSpeed = 15;
@@ -48,7 +51,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		//Find what direction the movement is taking place based on input
-		movementDirection = Input.GetAxisRaw("Horizontal");
+		movementDirection = Input.GetAxisRaw("Horizontal" + playerNumber);
 		CheckDirection();
 
 		//Check if the player is grounded
@@ -109,19 +112,19 @@ public class PlayerController : MonoBehaviour {
 	private void HandleJump() {
 		//Check if the jump button's been pressed and if the player is grounded
 		//Also check to see if the player has reached the max jump count
-		if (Input.GetButtonDown("Jump") && (isGrounded || jumpCount != maxJumps)) {
+		if (Input.GetButtonDown("Jump" + playerNumber) && (isGrounded || jumpCount != maxJumps)) {
 			jumpCount++;
 			Jump();
 		}
 
 		//Wall jumping
-		else if (Input.GetButtonDown("Jump") && isWallSliding) {
+		else if (Input.GetButtonDown("Jump" + playerNumber) && isWallSliding) {
 			//Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * CheckWallSlide(), wallJumpForce * wallJumpDirection.y);
 			//rb.AddForce(forceToAdd, ForceMode2D.Impulse);
 		}
 
 		//Early jump release for variable jump height
-		if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f) {
+		if (Input.GetButtonUp("Jump" + playerNumber) && rb.velocity.y > 0f) {
 			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
 		}
 	}
@@ -132,7 +135,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void WallJump() {
 		//Check if the jump button's been pressed and if the player is grounded 
-		if (Input.GetButtonDown("Jump") && !isGrounded) {
+		if (Input.GetButtonDown("Jump" + playerNumber) && !isGrounded) {
 			//Check what wall we are sliding on
 			//-1 indicates a right wall, 0 indicates no wall, 1 indicates a left wall
 			int wallPosition = CheckWallSlide();
@@ -196,10 +199,7 @@ public class PlayerController : MonoBehaviour {
 		if(warpCount == maxWarps) { return; }
 
 		//Make sure warp button has been pressed
-		if (Input.GetButtonDown("Fire1")) {
-			//Find player direction
-			int direction = (int) Input.GetAxisRaw("Horizontal");
-
+		if (Input.GetButtonDown("Fire1" + playerNumber)) {
 			//Make sure player is moving left or right
 			if(direction== 0) { return; }
 
@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void HandleFire() {
-		if (Input.GetButtonDown("Fire2")) {
+		if (Input.GetButtonDown("Fire2" + playerNumber)) {
 			//Calculate where the bullet will be fired
 			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*2 + 0.1f ) * direction, transform.position.y);
 
