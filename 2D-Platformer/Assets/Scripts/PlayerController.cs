@@ -16,7 +16,11 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] int maxWarps = 1;
 	[SerializeField] float warpDistance = 5;
 
+	[Header("Weapons")]
+	[SerializeField] GameObject bullet;
+
 	[Header("Player States")]
+	[SerializeField] int direction = 1;
 	[SerializeField] int jumpCount = 0;
 	[SerializeField] int warpCount = 0;
 	[SerializeField] float movementDirection;
@@ -44,6 +48,7 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		//Find what direction the movement is taking place based on input
 		movementDirection = Input.GetAxisRaw("Horizontal");
+		CheckDirection();
 
 		//Check if the player is grounded
 		CheckGrounded();
@@ -57,8 +62,15 @@ public class PlayerController : MonoBehaviour {
 		//Check for warps
 		HandleWarp();
 
+		//Check for bullet firing
+		HandleFire();
 		//Check for wall jumps
 		//WallJump();
+	}
+
+	void CheckDirection() {
+		if(movementDirection > 0) { direction = 1; }
+		else if (movementDirection < 0) { direction = -1; }
 	}
 
 	//Runs every physics step
@@ -200,6 +212,15 @@ public class PlayerController : MonoBehaviour {
 				transform.position = new Vector2(transform.position.x + (warpDistance * direction) , transform.position.y);
 			}
 
+		}
+	}
+
+	private void HandleFire() {
+		if (Input.GetButtonDown("Fire2")) {
+			float bulletBounds = bullet.GetComponent<BoxCollider2D>().bounds.extents.x * 2;
+			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*3 ) * direction, transform.position.y);
+			GameObject bulletClone = Instantiate(bullet, bulletPosition, transform.rotation);
+			bulletClone.transform.localScale = new Vector3(direction, 1, 1);
 		}
 	}
 }
