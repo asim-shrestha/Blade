@@ -6,14 +6,19 @@ public class PlayerController : MonoBehaviour {
 	[Header("Player configuration")]
 	[SerializeField] float movementSpeed = 12;
 	[SerializeField] float jumpSpeed = 15;
-	[SerializeField] float jumpMovementForce = 15;
-	[SerializeField] float wallJumpSpeed = 5;
-	[SerializeField] float wallSlideSpeed = 5;
 	[SerializeField] float variableJumpHeightMultiplier = 0.5f;
+	[SerializeField] float jumpMovementForce = 15;
+	[SerializeField] [Range(0, 1)] float airDragMultiplier = 1;
+	[SerializeField] float wallSlideSpeed = 5;
+	[SerializeField] float wallJumpForce = 15;
+	[SerializeField] Vector2 wallJumpDirection = new Vector2 (1f,1f);
 	[SerializeField] int maxJumps = 2;
+	[SerializeField] int maxWarps = 1;
+	[SerializeField] float warpDistance = 5;
 
 	[Header("Player States")]
 	[SerializeField] int jumpCount = 0;
+	[SerializeField] int warpCount = 0;
 	[SerializeField] float movementDirection;
 	[SerializeField] bool isGrounded = true;
 	[SerializeField] bool isWallSliding = false;
@@ -31,6 +36,8 @@ public class PlayerController : MonoBehaviour {
 		//Get layermask so ray casts do not intersect with the player layer
 		int groundLayer = 9;
 		groundLayerMask = 1 << groundLayer;
+
+		wallJumpDirection.Normalize();
 	}
 
 	// Update is called once per frame
@@ -47,6 +54,9 @@ public class PlayerController : MonoBehaviour {
 		//Check for jumps
 		HandleJump();
 
+		//Check for warps
+		HandleWarp();
+
 		//Check for wall jumps
 		//WallJump();
 	}
@@ -59,7 +69,25 @@ public class PlayerController : MonoBehaviour {
 
 	private void MovePlayer() {
 		//Horizontal ground movement
-		rb.velocity = new Vector2(movementSpeed * movementDirection, rb.velocity.y);
+		if (isGrounded) {
+			rb.velocity = new Vector2(movementSpeed * movementDirection, rb.velocity.y);
+		}
+
+		//Air movement
+		if (!isGrounded && !isWallSliding && movementDirection != 0) {
+			Vector2 forceVector = new Vector2(jumpMovementForce * movementDirection ,0f);
+			rb.AddForce(forceVector);
+			if (Mathf.Abs(rb.velocity.x) > movementSpeed) {
+				rb.velocity = new Vector2(movementSpeed * movementDirection, rb.velocity.y);
+			}
+		}
+
+		//Air drag
+		if(!isGrounded && !isWallSliding && movementDirection == 0) {
+			if(rb.velocity.x != 0) {
+				rb.velocity = new Vector2(rb.velocity.x * airDragMultiplier, rb.velocity.y);
+			}
+		}
 
 		//Make sure the player isn't falling faster than wallSlideSpeed if he is wall sliding
 		if (isWallSliding && rb.velocity.y < -wallSlideSpeed) { rb.velocity = new Vector2 (rb.velocity.x, -wallSlideSpeed); }
@@ -75,7 +103,8 @@ public class PlayerController : MonoBehaviour {
 
 		//Wall jumping
 		else if (Input.GetButtonDown("Jump") && isWallSliding) {
-			Jump();
+			Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * CheckWallSlide(), wallJumpForce * wallJumpDirection.y);
+			rb.AddForce(forceToAdd, ForceMode2D.Impulse);
 		}
 
 		//Early jump release for variable jump height
@@ -97,7 +126,7 @@ public class PlayerController : MonoBehaviour {
 			if (wallPosition == 0) { return; }
 
 			Debug.Log(wallPosition);
-			rb.velocity += (new Vector2(1f * wallPosition, 1f) * wallJumpSpeed);
+			rb.velocity += (new Vector2(1f * wallPosition, 1f) * wallJumpForce);
 		}
 	}
 
@@ -110,6 +139,7 @@ public class PlayerController : MonoBehaviour {
 		if (Physics2D.Raycast(transform.position, Vector2.down, distFromGround, groundLayerMask).collider != null) {
 			isGrounded = true;
 			jumpCount = 0;
+			warpCount = 0;
 			return;
 		}
 
@@ -128,7 +158,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//Distance between player pivot and the side of the player
-		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.1f;   //Needs a little offset so the ray actually hits walls
+		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f;   //Needs a little offset so the ray actually hits walls
 		//Cast rays and make sure the proper button is being held
 		//Check right wall 
 		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") > 0) {
@@ -145,6 +175,27 @@ public class PlayerController : MonoBehaviour {
 		else {
 			isWallSliding = false;
 			return 0;
+		}
+	}
+
+	private void HandleWarp() {
+		//Make sure warp button has been pressed
+		if (Input.GetButtonDown("Fire1")) {
+			//Find player direction
+			int direction = (int) Input.GetAxisRaw("Horizontal");
+
+			//Make sure player is moving left or right
+			if(direction== 0) { return; }
+
+			//Find where the player would warp through ray cast
+			//Distance between player pivot and end warp point
+			float rayDistance = (GetComponent<BoxCollider2D>().bounds.extents.x * 2) + warpDistance + 0.1f;   //Needs a little offset so the ray may hit walls
+
+			//Ray cast
+			if (Physics2D.Raycast(transform.position, Vector2.right * direction, rayDistance, groundLayerMask).collider == null) {
+				transform.position = new Vector2(transform.position.x + (warpDistance * direction) , transform.position.y);
+			}
+
 		}
 	}
 }
