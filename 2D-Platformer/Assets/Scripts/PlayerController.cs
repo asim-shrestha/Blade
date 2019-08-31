@@ -70,19 +70,22 @@ public class PlayerController : MonoBehaviour {
 		//Also check to see if the player has reached the max jump count
 		if (Input.GetButtonDown("Jump") && (isGrounded || jumpCount != maxJumps)) {
 			jumpCount++;
-			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+			Jump();
 		}
 
 		//Wall jumping
 		else if (Input.GetButtonDown("Jump") && isWallSliding) {
-			Vector2 wallJumpForce = new Vector2(1f * CheckWallSlide(), 1f).normalized * wallJumpSpeed;
-			rb.AddForce(wallJumpForce);
+			Jump();
 		}
 
 		//Early jump release for variable jump height
-		if (Input.GetButtonUp("Jump")) {
+		if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f) {
 			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
 		}
+	}
+
+	private void Jump() {
+		rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 	}
 
 	private void WallJump() {
