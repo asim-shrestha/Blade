@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 	[Header("Player configuration")]
-	[SerializeField] float playerSpeed = 12;
+	[SerializeField] float movementSpeed = 12;
 	[SerializeField] float jumpSpeed = 15;
+	[SerializeField] float jumpMovementForce = 15;
 	[SerializeField] float wallJumpSpeed = 5;
 	[SerializeField] float wallSlideSpeed = 5;
 	[SerializeField] float variableJumpHeightMultiplier = 0.5f;
@@ -57,10 +58,21 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void MovePlayer() {
-		//Horizontal movement
-		rb.velocity = new Vector2(movementDirection * playerSpeed, rb.velocity.y);
+		//Horizontal ground movement
+		if (isGrounded) {
+			rb.velocity = new Vector2(movementDirection * movementSpeed, rb.velocity.y);
+		}
 
-		//Make sure the player isn't falling faster than the wall slide speed if he is wall sliding
+		//Horizontal air movement
+		else if(!isGrounded && !isWallSliding) {
+			Vector2 forceToAdd = new Vector2(jumpMovementForce * movementDirection, 0f);
+			rb.AddForce(forceToAdd);
+
+			//Clamp the force so that the max velocity is playerSpeed
+			if(Mathf.Abs(rb.velocity.x) > movementSpeed) { rb.velocity = new Vector2(movementSpeed * movementDirection, rb.velocity.y); }
+		}
+
+		//Make sure the player isn't falling faster than wallSlideSpeed if he is wall sliding
 		if (isWallSliding && rb.velocity.y < -wallSlideSpeed) { rb.velocity = new Vector2 (rb.velocity.x, -wallSlideSpeed); }
 	}
 
@@ -74,8 +86,8 @@ public class PlayerController : MonoBehaviour {
 
 		//Wall jumping
 		else if (Input.GetButtonDown("Jump") && isWallSliding) {
-			Vector2 wallJumpDirection = new Vector2(1f, 1f).normalized;
-			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+			Vector2 wallJumpForce = new Vector2(1f * CheckWallSlide(), 1f).normalized * wallJumpSpeed;
+			rb.AddForce(wallJumpForce);
 		}
 
 		//Early jump release for variable jump height
