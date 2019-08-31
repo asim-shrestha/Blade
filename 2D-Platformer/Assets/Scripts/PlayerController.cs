@@ -103,8 +103,8 @@ public class PlayerController : MonoBehaviour {
 
 		//Wall jumping
 		else if (Input.GetButtonDown("Jump") && isWallSliding) {
-			Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * CheckWallSlide(), wallJumpForce * wallJumpDirection.y);
-			rb.AddForce(forceToAdd, ForceMode2D.Impulse);
+			//Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * CheckWallSlide(), wallJumpForce * wallJumpDirection.y);
+			//rb.AddForce(forceToAdd, ForceMode2D.Impulse);
 		}
 
 		//Early jump release for variable jump height
@@ -179,6 +179,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void HandleWarp() {
+		//Make sure there are warps avaliable
+		if(warpCount == maxWarps) { return; }
+
 		//Make sure warp button has been pressed
 		if (Input.GetButtonDown("Fire1")) {
 			//Find player direction
@@ -193,6 +196,7 @@ public class PlayerController : MonoBehaviour {
 
 			//Ray cast
 			if (Physics2D.Raycast(transform.position, Vector2.right * direction, rayDistance, groundLayerMask).collider == null) {
+				warpCount++;
 				transform.position = new Vector2(transform.position.x + (warpDistance * direction) , transform.position.y);
 			}
 
