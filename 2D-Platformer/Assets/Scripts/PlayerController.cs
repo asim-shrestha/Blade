@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 	[Header("Controller configuration")]
-	[SerializeField] string playerNumber = "";
+	[SerializeField] public string playerNumber = "";
 
 	[Header("Player configuration")]
 	[SerializeField] float movementSpeed = 12;
@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float wallJumpForce = 15;
 	[SerializeField] Vector2 wallJumpDirection = new Vector2 (1f,1f);
 	[SerializeField] [Range(0,1)] float movementLockTime = 1f;
-	[SerializeField] int maxBullets = 3;
 	[SerializeField] int maxJumps = 2;
 	[SerializeField] int maxWarps = 1;
 	[SerializeField] float warpDistance = 5;
@@ -25,9 +24,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] GameObject bullet;
 
 	[Header("Player States")]
-	[SerializeField] int health = 1;
-	[SerializeField] int direction = 1;
-	[SerializeField] int bulletCount = 0;
+	[SerializeField] public int direction = 1;
 	[SerializeField] int jumpCount = 0;
 	[SerializeField] int warpCount = 0;
 	[SerializeField] float movementDirection;
@@ -83,9 +80,6 @@ public class PlayerController : MonoBehaviour {
 
 		//Check for warps
 		HandleWarp();
-
-		//Check for bullet firing
-		HandleFire();
 	}
 
 	void CheckDirection() {
@@ -130,8 +124,9 @@ public class PlayerController : MonoBehaviour {
 		//Also check to see if the player has reached the max jump count
 		if (Input.GetButtonDown("Jump" + playerNumber) && (isGrounded || jumpCount != maxJumps) && !isWallSliding) {
 			isVariableJumpEnabled = true;
+			movementLockDirection = 0;
 			jumpCount++;
-			Jump();
+			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 		}
 
 		//Wall jumping
@@ -146,10 +141,6 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetButtonUp("Jump" + playerNumber) && rb.velocity.y > 0f && isVariableJumpEnabled) {
 			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
 		}
-	}
-
-	private void Jump() {
-		rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 	}
 
 	//Use raycasting to figure out if the player is standing on the ground
@@ -176,6 +167,7 @@ public class PlayerController : MonoBehaviour {
 		//Make sure player is off the ground and is falling in the air
 		if (isGrounded == true){//|| rb.velocity.y > 0) {
 			isWallSliding = false;
+			GetComponent<SpriteRenderer>().color = Color.white;
 			return 0;
 		}
 
@@ -183,13 +175,13 @@ public class PlayerController : MonoBehaviour {
 		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f;   //Needs a little offset so the ray actually hits walls
 		//Cast rays and make sure the proper button is being held
 		//Check right wall 
-		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && direction > 0) {
+		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && movementDirection > 0) {
 			isWallSliding = true;
 			GetComponent<SpriteRenderer>().color = Color.blue;
 			return -1;
 		}
 		//Check left wall
-		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && direction < 0) {
+		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && movementDirection < 0) {
 			isWallSliding = true;
 			GetComponent<SpriteRenderer>().color = Color.blue;
 			return 1;
@@ -225,42 +217,16 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void HandleFire() {
-		if (Input.GetButtonDown("Fire2" + playerNumber)) {
-			//Check if there are bullets left
-			if(bulletCount >= maxBullets) { return; }
-
-			//Calculate where the bullet will be fired
-			Vector3 bulletPosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x*2 + 0.1f ) * direction, transform.position.y);
-
-			//Fire bullet and set direction
-			bulletCount++;
-			GameObject bulletClone = Instantiate(bullet, bulletPosition, transform.rotation);
-			bulletClone.transform.localScale = new Vector3(direction, 1, 1);
-		}
-	}
-
-	private void OnTriggerEnter2D(Collider2D collision) {
-		health--;
-		if (health <= 0) {
-			Destroy(this.gameObject);
-		}
-		else {
-			GetComponent<SpriteRenderer>().color = Color.white;
-			StartCoroutine(HitAnimation());
-
-		}
-	}
-
-	IEnumerator HitAnimation() {
-		GetComponent<SpriteRenderer>().color = Color.red;
-		yield return new WaitForSeconds(.1f);
-		GetComponent<SpriteRenderer>().color = Color.white;
-	}
-
 	private void MovementLock(int disabledDirection) {
 		movementLockDirection = disabledDirection;
 		movementLockCounter = movementLockTime;
 	}
 
+	public string GetPlayerNumber() {
+		return playerNumber;
+	}
+
+	public int GetDirection() {
+		return direction;
+	}
 }
