@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float movementDirection;
 	[SerializeField] float movementLockCounter;
 	[SerializeField] int movementLockDirection = 0;
+	[SerializeField] bool isVariableJumpEnabled = true;
 	[SerializeField] bool isGrounded = true;
 	[SerializeField] bool isWallSliding = false;
 	[SerializeField] bool isCrouching = false;
@@ -56,12 +57,20 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		//Update movement disabled counter
-		if(movementLockCounter > 0) { movementLockCounter -= Time.deltaTime; }
-		else { movementLockDirection = 0; }
+		if(movementLockCounter > 0) {
+			movementLockCounter -= Time.deltaTime;
+			movementDirection = -movementLockDirection;
+		}
 
 		//Find what direction the movement is taking place based on input
-		movementDirection = Input.GetAxisRaw("Horizontal" + playerNumber);
+		else {
+			movementLockDirection = 0;
+			movementDirection = Input.GetAxisRaw("Horizontal" + playerNumber);
+		}
+
+		//Check where the player should be facing
 		CheckDirection();
+
 
 		//Check if the player is grounded
 		CheckGrounded();
@@ -101,9 +110,6 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		//Check if movement is enabled
-		if(movementLockDirection == direction) { return; }
-
 		//Horizontal ground movement
 		if (isGrounded) {
 			rb.velocity = new Vector2(movementSpeed * movementDirection, rb.velocity.y);
@@ -123,19 +129,21 @@ public class PlayerController : MonoBehaviour {
 		//Check if the jump button's been pressed and if the player is grounded
 		//Also check to see if the player has reached the max jump count
 		if (Input.GetButtonDown("Jump" + playerNumber) && (isGrounded || jumpCount != maxJumps) && !isWallSliding) {
+			isVariableJumpEnabled = true;
 			jumpCount++;
 			Jump();
 		}
 
 		//Wall jumping
 		else if (Input.GetButtonDown("Jump" + playerNumber) && isWallSliding) {
+			isVariableJumpEnabled = false;
 			Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * CheckWallSlide(), wallJumpForce * wallJumpDirection.y);
 			rb.AddForce(forceToAdd, ForceMode2D.Impulse);
 			MovementLock(direction);
 		}
 
 		//Early jump release for variable jump height
-		if (Input.GetButtonUp("Jump" + playerNumber) && rb.velocity.y > 0f) {
+		if (Input.GetButtonUp("Jump" + playerNumber) && rb.velocity.y > 0f && isVariableJumpEnabled) {
 			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
 		}
 	}
@@ -166,7 +174,7 @@ public class PlayerController : MonoBehaviour {
 
 	private int CheckWallSlide() {
 		//Make sure player is off the ground and is falling in the air
-		if(isGrounded == true || rb.velocity.y > 0) {
+		if (isGrounded == true){//|| rb.velocity.y > 0) {
 			isWallSliding = false;
 			return 0;
 		}
@@ -175,18 +183,21 @@ public class PlayerController : MonoBehaviour {
 		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f;   //Needs a little offset so the ray actually hits walls
 		//Cast rays and make sure the proper button is being held
 		//Check right wall 
-		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") > 0) {
+		if (Physics2D.Raycast(transform.position, Vector2.right, distFromWall, groundLayerMask).collider != null && direction > 0) {
 			isWallSliding = true;
+			GetComponent<SpriteRenderer>().color = Color.blue;
 			return -1;
 		}
 		//Check left wall
-		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && Input.GetAxisRaw("Horizontal") < 0) {
+		else if (Physics2D.Raycast(transform.position, Vector2.left, distFromWall, groundLayerMask).collider != null && direction < 0) {
 			isWallSliding = true;
+			GetComponent<SpriteRenderer>().color = Color.blue;
 			return 1;
 		}
 
 		//No walls found
 		else {
+			GetComponent<SpriteRenderer>().color = Color.white;
 			isWallSliding = false;
 			return 0;
 		}
