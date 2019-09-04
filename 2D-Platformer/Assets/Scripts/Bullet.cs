@@ -23,8 +23,10 @@ public class Bullet : MonoBehaviour
 		//Add camera shake
 		FindObjectOfType<CameraController>().StartCameraShake();
 
-		//Play sound
-		FindObjectOfType<SoundManager>().PlayWallHitSound();
+		if (collision.tag != "Player") {
+			//Play wall hit sound
+			FindObjectOfType<SoundManager>().PlayWallHitSound();
+		}
 
 		//Create particle effects and destroy object
 		GameObject particles = Instantiate(bulletParticles, transform.position, transform.rotation);

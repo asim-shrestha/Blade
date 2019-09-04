@@ -58,6 +58,8 @@ public class PlayerDamageSystem : MonoBehaviour
 			LevelManager lm = FindObjectOfType<LevelManager>();
 			lm.ResetGame(playerNumber);
 
+			//Play sound
+			FindObjectOfType<SoundManager>().PlayWallHitSound();
 			//Destroy self
 			Destroy(this.gameObject);
 		}
