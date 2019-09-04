@@ -56,7 +56,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		if (damageTaken >= totalHealth) {
 			//Find the level manager and tell it to reset the game
 			LevelManager lm = FindObjectOfType<LevelManager>();
-			lm.ResetGame();
+			lm.ResetGame(playerNumber);
 
 			//Destroy self
 			Destroy(this.gameObject);

@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-	[SerializeField] GameObject playerObject;
 	[SerializeField] int numPlayers = 2;
+	[SerializeField] GameObject playerObject;
+	[SerializeField] Sprite player1Sprite;
 	[SerializeField] GameObject[] spawnPoints;
 	[SerializeField] [Range(0, 3)] float resetTime = 1;
-	[SerializeField] Sprite player1Sprite;
+	[SerializeField] Vector2 scores;
 	private List<int> usedSpawnIndexes;
 
     // Start is called before the first frame update
     void Start()
     {
+		scores = new Vector2(0, 0);
 		spawnPoints = GameObject.FindGameObjectsWithTag("Respawn");
 		usedSpawnIndexes = new List<int>();
 		usedSpawnIndexes.Clear();
@@ -55,13 +57,20 @@ public class LevelManager : MonoBehaviour
 		}
 	}
 
-	public void ResetGame() {
+	public Vector2 GetScores() {
+		return scores;
+	}
+
+	public void ResetGame(string deadPlayerNumber) {
+		//Add score to the WINNING player
+		if (deadPlayerNumber == "") { scores.y++; }
+		else if (deadPlayerNumber == "1") { scores.x++; }
+
 		//Find each player and destroy them
 		PlayerController[] players = FindObjectsOfType<PlayerController>();
 		foreach (PlayerController player in players) {
 			Destroy(player.gameObject);
 		}
-
 
 		//Reset spawn points list
 		usedSpawnIndexes.Clear();
