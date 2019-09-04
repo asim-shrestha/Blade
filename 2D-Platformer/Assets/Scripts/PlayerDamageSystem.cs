@@ -27,9 +27,6 @@ public class PlayerDamageSystem : MonoBehaviour
 
 	// Update is called once per frame
 	void Update() {
-		//Get player direction
-		direction = pc.GetDirection();
-
 		//Handle fireing 
 		if (Input.GetButtonDown("Fire2" + playerNumber)) {
 			FireBullet();
@@ -37,6 +34,9 @@ public class PlayerDamageSystem : MonoBehaviour
 	}
 
 	private void FireBullet() {
+		//Find player direction
+		direction = pc.GetDirection();
+
 		//Check if the player has bullets left
 		if (bulletsUsed >= maxBullets) { return; }
 

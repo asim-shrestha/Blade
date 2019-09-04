@@ -72,6 +72,10 @@ public class PlayerController : MonoBehaviour {
 
 		//Check if the player is sliding on a wall
 		if (isGrounded == false) { CheckWallSlide(); }
+		else {
+			GetComponent<SpriteRenderer>().color = Color.white;
+			isWallSliding = false;
+		}
 
 		//Check for jumps
 		if (Input.GetButtonDown("Jump" + playerNumber)) { HandleJump(); }

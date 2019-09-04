@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] int numPlayers = 2;
 	[SerializeField] GameObject[] spawnPoints;
 	[SerializeField] [Range(0, 3)] float resetTime = 1;
+	[SerializeField] Sprite player1Sprite;
 	private List<int> usedSpawnIndexes;
 
     // Start is called before the first frame update
@@ -19,12 +20,6 @@ public class LevelManager : MonoBehaviour
 		StartGame();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 	private void StartGame() {
 		//Spawn player
 		Transform spawnPoint = FindSpawnPoint();
@@ -34,6 +29,7 @@ public class LevelManager : MonoBehaviour
 		spawnPoint = FindSpawnPoint();
 		GameObject player1 = Instantiate(playerObject, spawnPoint.position, spawnPoint.rotation);
 		player1.GetComponent<PlayerController>().SetPlayerNumber("1");
+		player1.GetComponent<SpriteRenderer>().sprite = player1Sprite;
 	}
 
 	private Transform FindSpawnPoint() {

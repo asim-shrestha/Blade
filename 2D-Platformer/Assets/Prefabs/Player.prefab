@@ -54,7 +54,7 @@ MonoBehaviour:
   jumpMovementForce: 60
   variableJumpHeightMultiplier: 0.5
   airDragMultiplier: 0.5
-  wallSlideSpeed: 2
+  wallSlideSpeed: 1.5
   wallJumpForce: 13
   wallJumpDirection: {x: 0.45, y: 1}
   movementLockTime: 0.25

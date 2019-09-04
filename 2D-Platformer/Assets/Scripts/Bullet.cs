@@ -15,23 +15,13 @@ public class Bullet : MonoBehaviour
 		rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
 	// Update is called once per frame
 	void FixedUpdate() {
 		rb.velocity = new Vector2(bulletSpeed * transform.localScale.x, 0);
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {
-		Instantiate(bulletParticles, transform.position, transform.rotation);
-		Destroy(this.gameObject);
-	}
-
-	private void OnTriggerStay2D(Collider2D collision) {
+		//Create effects and destroy object
 		Instantiate(bulletParticles, transform.position, transform.rotation);
 		Destroy(this.gameObject);
 	}
