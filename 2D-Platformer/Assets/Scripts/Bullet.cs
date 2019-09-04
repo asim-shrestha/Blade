@@ -13,6 +13,7 @@ public class Bullet : MonoBehaviour
     void Start()
     {
 		rb = GetComponent<Rigidbody2D>();
+		FindObjectOfType<SoundManager>().PlayBulletFireSound();
     }
 
 	// Update is called once per frame
@@ -23,6 +24,9 @@ public class Bullet : MonoBehaviour
 	private void OnTriggerEnter2D(Collider2D collision) {
 		//Add camera shake
 		FindObjectOfType<CameraController>().StartCameraShake();
+
+		//Play sound
+		FindObjectOfType<SoundManager>().PlayWallHitSound();
 
 		//Create particle effects and destroy object
 		Instantiate(bulletParticles, transform.position, transform.rotation);
