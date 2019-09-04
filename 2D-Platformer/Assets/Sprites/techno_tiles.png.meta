@@ -173,7 +173,7 @@ TextureImporter:
         - {x: 16, y: 16}
       tessellationDetail: 0
       bones: []
-      spriteID: 19532f2ae124dd849b65f84e864747e3
+      spriteID: e359baf974c0b87409fa27e71a88e5ce
       internalID: 6305067787930135606
       vertices: []
       indices: 
@@ -194,7 +194,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f09050f038abeca4385664020a52adda
+      spriteID: c5a3481dff268b547a09be3f3cf6078a
       internalID: -6237136477744306846
       vertices: []
       indices: 
@@ -217,9 +217,9 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-      tessellationDetail: 0
+      tessellationDetail: 1
       bones: []
-      spriteID: 83aef421d1aa168489852c329baf66c8
+      spriteID: 7edb104f9bcfc4340857c7519b8a533c
       internalID: -3474367539237934675
       vertices: []
       indices: 
@@ -240,7 +240,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bca4aac3bc82e4744998b671ad6fce10
+      spriteID: 4a19ecdf47b4451408637a326a41356f
       internalID: -409850331347190827
       vertices: []
       indices: 
@@ -261,7 +261,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7b6a33dc8c7a47544bb041a85c35e404
+      spriteID: e54c8d6aba618c44bb28179c0d426644
       internalID: -8305212246931135638
       vertices: []
       indices: 
@@ -282,7 +282,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 40958593f8abb9d40b8fa17dc83a5512
+      spriteID: 5ae58f6a678e1f6459c6ec91aee592e0
       internalID: 1062150309862395184
       vertices: []
       indices: 
@@ -303,7 +303,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ecd5c63d8f8f43b48bb1a1d410c1158a
+      spriteID: 73abf0ecdaa1538438f2a481df7181e4
       internalID: 9041680005079001190
       vertices: []
       indices: 
@@ -324,7 +324,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1fe365a9020a8b04193d2bce2d0b8d8e
+      spriteID: 4c4a280d0c0aaf449a2ca985da4d273c
       internalID: 4519813820700414466
       vertices: []
       indices: 
@@ -345,7 +345,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f1eeb38ad23e0a24c93ba86db1f8725e
+      spriteID: 6679714c7ff2c134d9293f88b268ff53
       internalID: -9023233322539349910
       vertices: []
       indices: 
@@ -366,7 +366,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cbee66e2e74f57746ba774e1cbb0dd0d
+      spriteID: 8bcb31d0046c1e649b95aca3d28f7fd5
       internalID: 1732366952535470019
       vertices: []
       indices: 
@@ -391,7 +391,7 @@ TextureImporter:
         - {x: 16, y: 16}
       tessellationDetail: 0
       bones: []
-      spriteID: 0f0c5d64f76362e4b8efe9870c26c0ee
+      spriteID: 438e80d35f40d8a468ca5d5aa9d20660
       internalID: -2559504634205420701
       vertices: []
       indices: 
@@ -412,7 +412,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95814054855b6404791efaa84fb0d300
+      spriteID: aa80634f524599943adfb057be7aa95c
       internalID: 775845475536306798
       vertices: []
       indices: 
@@ -435,9 +435,9 @@ TextureImporter:
         - {x: -16, y: -16}
         - {x: 16, y: -16}
         - {x: 16, y: 16}
-      tessellationDetail: 1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1779b358cd741764292cc3d5950bd044
+      spriteID: 82c20f2de36eb5040a8bf15f0f3accd3
       internalID: 9206318618242454340
       vertices: []
       indices: 
@@ -445,6 +445,126 @@ TextureImporter:
       weights: []
     - serializedVersion: 2
       name: techno_tiles_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 10, y: 15}
+        - {x: 8, y: 16}
+        - {x: 6, y: 15}
+        - {x: 0, y: -14}
+        - {x: -6, y: 14}
+        - {x: -8, y: 16}
+        - {x: -10, y: 14}
+        - {x: -16, y: -16}
+        - {x: 16, y: -16}
+      tessellationDetail: 0.54
+      bones: []
+      spriteID: 02255506fc9ed8e4d99a4e2a22bd5e5d
+      internalID: 3851200949960509307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: techno_tiles_14
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -16, y: 16}
+        - {x: -10, y: -14}
+        - {x: -8, y: -16}
+        - {x: -6, y: -14}
+        - {x: 0, y: 14}
+        - {x: 6, y: -14}
+        - {x: 8, y: -16}
+        - {x: 10, y: -14}
+        - {x: 16, y: 16}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2910a18ea477fca48b6985c50ec5d1bf
+      internalID: 2699042026305574335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: techno_tiles_15
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -14, y: 10}
+        - {x: -16, y: 8}
+        - {x: -14, y: 6}
+        - {x: 14, y: 0}
+        - {x: -14, y: -6}
+        - {x: -16, y: -8}
+        - {x: -14, y: -10}
+        - {x: 16, y: -16}
+        - {x: 16, y: 16}
+      tessellationDetail: 0
+      bones: []
+      spriteID: c27cc98b83dadc34a807dba5cced58d5
+      internalID: 6098522813237040021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: techno_tiles_16
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 14, y: 10}
+        - {x: -16, y: 16}
+        - {x: -16, y: -16}
+        - {x: 14, y: -10}
+        - {x: 16, y: -8}
+        - {x: 14, y: -6}
+        - {x: -14, y: 0}
+        - {x: 14, y: 6}
+        - {x: 16, y: 8}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1076a277c3a728346a3a08c0a0a2f37c
+      internalID: 4897740478222263430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: techno_tiles_17
       rect:
         serializedVersion: 2
         x: 128
@@ -456,14 +576,14 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -16, y: -16}
-        - {x: -16, y: 16}
-        - {x: 16, y: 16}
+      - - {x: -16, y: 16}
+        - {x: -16, y: -16}
         - {x: 16, y: -16}
+        - {x: 16, y: 16}
       tessellationDetail: 0
       bones: []
-      spriteID: 0b9883ba8bc700140b7550d3d8e67c0e
-      internalID: 3851200949960509307
+      spriteID: 12482c36aba58f642befe5f16ffd0014
+      internalID: 5743772923956684782
       vertices: []
       indices: 
       edges: []
