@@ -90,8 +90,18 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void CheckDirection() {
-		if(movementDirection > 0) { facingDirection = 1; }
-		else if (movementDirection < 0) { facingDirection = -1; }
+		//Facing right
+		if(movementDirection > 0) {
+			facingDirection = 1;
+		}
+
+		//Facing left
+		else if (movementDirection < 0) {
+			facingDirection = -1;
+		}
+
+		//Make player face the right direction
+		transform.localScale = new Vector3(facingDirection, 1, 1);
 	}
 
 	//Runs every physics step

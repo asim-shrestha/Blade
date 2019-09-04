@@ -10,6 +10,7 @@ public class PlayerDamageSystem : MonoBehaviour
 	[SerializeField] int bulletsUsed = 0;
 
 	[Header("Damage System")]
+	[SerializeField] Transform firePoint;
 	[SerializeField] int totalHealth = 1;
 	[SerializeField] int damageTaken = 0;
 	[SerializeField] int damagePerBullet = 1;
@@ -41,7 +42,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		if (bulletsUsed >= maxBullets) { return; }
 
 		//Calculate where the bullet should be fired
-		Vector3 firePosition = new Vector3(transform.position.x + (GetComponent<BoxCollider2D>().bounds.extents.x * 2 + 0.1f) * direction, transform.position.y);
+		Vector3 firePosition = new Vector3(firePoint.position.x * direction, firePoint.position.y);
 
 		//Fire bullet and set direction
 		bulletsUsed++;
