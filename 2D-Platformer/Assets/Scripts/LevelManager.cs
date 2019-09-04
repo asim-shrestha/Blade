@@ -6,13 +6,14 @@ public class LevelManager : MonoBehaviour
 {
 	[SerializeField] GameObject playerObject;
 	[SerializeField] int numPlayers = 2;
-	[SerializeField] Transform[] spawnPoints;
+	[SerializeField] GameObject[] spawnPoints;
 	[SerializeField] [Range(0, 3)] float resetTime = 1;
 	private List<int> usedSpawnIndexes;
 
     // Start is called before the first frame update
     void Start()
     {
+		spawnPoints = GameObject.FindGameObjectsWithTag("Respawn");
 		usedSpawnIndexes = new List<int>();
 		usedSpawnIndexes.Clear();
 		StartGame();
@@ -54,14 +55,11 @@ public class LevelManager : MonoBehaviour
 		//Spawn index not taken, return transform and add index to used list
 		else {
 			usedSpawnIndexes.Add(spawnIndex);
-			return spawnPoints[spawnIndex];
+			return spawnPoints[spawnIndex].transform;
 		}
 	}
 
 	public void ResetGame() {
-		//Wait time before reset
-		yield return new WaitForSeconds(resetTime);
-
 		//Find each player and destroy them
 		PlayerController[] players = FindObjectsOfType<PlayerController>();
 		foreach (PlayerController player in players) {
