@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+	[Header("Player Settings")]
 	[SerializeField] int numPlayers = 2;
 	[SerializeField] GameObject playerObject;
 	[SerializeField] Sprite player1Sprite;
+	[SerializeField] GameObject spawnParticles;
+
+	[Header("Misc Settings")]
+	[SerializeField] Vector2 scores;
 	[SerializeField] GameObject[] spawnPoints;
 	[SerializeField] [Range(0, 3)] float resetTime = 1;
-	[SerializeField] Vector2 scores;
 	private List<int> usedSpawnIndexes;
 
     // Start is called before the first frame update
@@ -26,10 +30,14 @@ public class LevelManager : MonoBehaviour
 		//Spawn player
 		Transform spawnPoint = FindSpawnPoint();
 		GameObject player = Instantiate(playerObject, spawnPoint.position, spawnPoint.rotation);
+		GameObject particles = Instantiate(spawnParticles, spawnPoint.position, spawnPoint.rotation);
+		Destroy(particles, 2f);
 
 		//Spawn player1
 		spawnPoint = FindSpawnPoint();
 		GameObject player1 = Instantiate(playerObject, spawnPoint.position, spawnPoint.rotation);
+		particles = Instantiate(spawnParticles, spawnPoint.position, spawnPoint.rotation);
+		Destroy(particles, 2f);
 		player1.GetComponent<PlayerController>().SetPlayerNumber("1");
 		player1.GetComponent<SpriteRenderer>().sprite = player1Sprite;
 	}

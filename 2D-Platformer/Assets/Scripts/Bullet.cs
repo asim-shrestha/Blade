@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -29,7 +27,8 @@ public class Bullet : MonoBehaviour
 		FindObjectOfType<SoundManager>().PlayWallHitSound();
 
 		//Create particle effects and destroy object
-		Instantiate(bulletParticles, transform.position, transform.rotation);
+		GameObject particles = Instantiate(bulletParticles, transform.position, transform.rotation);
+		Destroy(particles, 2f);
 		Destroy(this.gameObject);
 	}
 }
