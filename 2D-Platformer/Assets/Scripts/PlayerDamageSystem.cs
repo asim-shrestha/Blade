@@ -42,7 +42,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		if (bulletsUsed >= maxBullets) { return; }
 
 		//Calculate where the bullet should be fired
-		Vector3 firePosition = new Vector3(firePoint.position.x * direction, firePoint.position.y);
+		Vector3 firePosition = new Vector3(firePoint.position.x, firePoint.position.y);
 
 		//Fire bullet and set direction
 		bulletsUsed++;
