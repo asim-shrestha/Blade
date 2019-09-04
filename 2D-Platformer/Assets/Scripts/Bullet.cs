@@ -21,7 +21,10 @@ public class Bullet : MonoBehaviour
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {
-		//Create effects and destroy object
+		//Add camera shake
+		FindObjectOfType<CameraController>().StartCameraShake();
+
+		//Create particle effects and destroy object
 		Instantiate(bulletParticles, transform.position, transform.rotation);
 		Destroy(this.gameObject);
 	}
