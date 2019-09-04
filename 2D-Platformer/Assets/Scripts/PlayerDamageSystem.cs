@@ -53,6 +53,11 @@ public class PlayerDamageSystem : MonoBehaviour
 		//Add damage taken and check if the player is dead
 		damageTaken++;
 		if (damageTaken >= totalHealth) {
+			//Find the level manager and tell it to reset the game
+			LevelManager lm = FindObjectOfType<LevelManager>();
+			lm.ResetGame();
+
+			//Destroy self
 			Destroy(this.gameObject);
 		}
 

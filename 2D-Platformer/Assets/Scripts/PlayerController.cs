@@ -206,6 +206,10 @@ public class PlayerController : MonoBehaviour {
 		movementLockCounter = movementLockTime;
 	}
 
+	public void SetPlayerNumber(string playerNumber) {
+		this.playerNumber = playerNumber;
+	}
+
 	public string GetPlayerNumber() {
 		return playerNumber;
 	}
