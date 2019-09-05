@@ -51,18 +51,22 @@ public class PlayerDamageSystem : MonoBehaviour
 		bulletClone.tag = "bullet" + playerNumber;		//Show which player shot the bullet
 	}
 
+	private void OnCollisionEnter2D(Collision2D collision) {
+		if (collision.gameObject.tag != "wall") {
+			//Check that the the enemy collided from the top of the player and that they were falling down
+			if (collision.contacts[0].normal.y <= 0 && collision.gameObject.GetComponent<Rigidbody2D>().velocity.y < 0) {
+				//Give the stomper some upward force
+				collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+				HandleDeath();
+			}
+		}
+	}
+
 	private void OnTriggerEnter2D(Collider2D collision) {
 		//Add damage taken and check if the player is dead
 		damageTaken++;
 		if (damageTaken >= totalHealth) {
-			//Find the level manager and tell it to reset the game
-			LevelManager lm = FindObjectOfType<LevelManager>();
-			lm.ResetGame(playerNumber);
-
-			//Play sound
-			FindObjectOfType<SoundManager>().PlayWallHitSound();
-			//Destroy self
-			Destroy(this.gameObject);
+			HandleDeath();
 		}
 
 		// Player isn't dead, play hit animation
@@ -70,6 +74,17 @@ public class PlayerDamageSystem : MonoBehaviour
 			StopCoroutine(HitAnimation());	//Reset the coroutines so that they don't intersect with each other
 			StartCoroutine(HitAnimation());
 		}
+	}
+
+	private void HandleDeath() {
+		//Find the level manager and tell it to reset the game
+		LevelManager lm = FindObjectOfType<LevelManager>();
+		lm.PlayerKilled(playerNumber);
+
+		//Play sound
+		FindObjectOfType<SoundManager>().PlayWallHitSound();
+		//Destroy self
+		Destroy(this.gameObject);
 	}
 
 	IEnumerator HitAnimation() {

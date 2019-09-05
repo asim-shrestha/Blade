@@ -5,23 +5,28 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 	[Header("Controller configuration")]
 	[SerializeField] public string playerNumber = "";
-
-	[Header("Player configuration")]
 	[SerializeField] float movementSpeed = 12;
 
+	[Header("Jumping")]
 	[SerializeField] int maxJumps = 2;
 	[SerializeField] float jumpSpeed = 15;
 	[SerializeField] float jumpMovementForce = 15;
 	[SerializeField] float variableJumpHeightMultiplier = 0.5f;
 	[SerializeField] [Range(0, 1)] float airDragMultiplier = 1;
+
+	[Header("Wall Sliding")]
 	[SerializeField] float wallSlideSpeed = 5;
+	[SerializeField] float wallHopForce = 15;
 	[SerializeField] float wallJumpForce = 15;
+	[SerializeField] Vector2 wallHopDirection = new Vector2(1f, 1f);
 	[SerializeField] Vector2 wallJumpDirection = new Vector2 (1f,1f);
 	[SerializeField] [Range(0,1)] float movementLockTime = 1f;
+
+	[Header("Warping")]
 	[SerializeField] int maxWarps = 1;
 	[SerializeField] float warpDistance = 5;
 
-	[Header("Player States")]
+	[Header("Player State")]
 	[SerializeField] public int facingDirection = 1;
 	[SerializeField] int jumpCount = 0;
 	[SerializeField] int warpCount = 0;
@@ -46,7 +51,12 @@ public class PlayerController : MonoBehaviour {
 		int groundLayer = 9;
 		groundLayerMask = 1 << groundLayer;
 
+		//Normalize so we can properly scale
 		wallJumpDirection.Normalize();
+		wallHopDirection.Normalize();
+
+		//Play sound
+		FindObjectOfType<SoundManager>().PlaySpawnSound();
 	}
 
 	// Update is called once per frame
@@ -90,6 +100,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void CheckDirection() {
+		//Don't change direction if we are wall sliding
+		if (isWallSliding) { return; }
+
 		//Facing right
 		if(movementDirection > 0) {
 			facingDirection = 1;
@@ -128,15 +141,17 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		//Make sure the player isn't falling faster than wallSlideSpeed if he is wall sliding
-		if (isWallSliding && rb.velocity.y < -wallSlideSpeed) { rb.velocity = new Vector2 (rb.velocity.x, -wallSlideSpeed); }
-
 		//Air drag
-		if(!isGrounded && !isWallSliding && movementDirection == 0) {
+		else if(!isGrounded && !isWallSliding && movementDirection == 0) {
 			if(rb.velocity.x != 0) {
 				rb.velocity = new Vector2(rb.velocity.x * airDragMultiplier, rb.velocity.y);
 			}
 		}
+		else if(!isGrounded && isWallSliding)
+
+		//Make sure the player isn't falling faster than wallSlideSpeed if he is wall sliding
+		if (isWallSliding && rb.velocity.y < -wallSlideSpeed) { rb.velocity = new Vector2 (rb.velocity.x, -wallSlideSpeed); }
+
 	}
 
 	private void HandleJump() {
@@ -148,8 +163,17 @@ public class PlayerController : MonoBehaviour {
 			rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 		}
 
-		//Wall jumping
-		else if (isWallSliding) {
+		//Wall hopping
+		else if (isWallSliding && movementDirection == 0) {
+			//Disable variable height jump
+			isVariableJumpEnabled = false;
+
+			//Find the force to add
+			Vector2 forceToAdd = new Vector2(wallHopForce * wallHopDirection.x * -facingDirection, wallHopForce * wallHopDirection.y);
+			rb.AddForce(forceToAdd, ForceMode2D.Impulse);
+		}
+
+		else if (isWallSliding && movementDirection != 0) {
 			//Disable variable height jump
 			isVariableJumpEnabled = false;
 
@@ -188,7 +212,8 @@ public class PlayerController : MonoBehaviour {
 		float distFromWall = GetComponent<BoxCollider2D>().bounds.extents.x + 0.1f;   //Needs a little offset so the ray actually hits walls
 
 		//Cast rays in the facing direction and make sure that that direction is being moved to 
-		if (Physics2D.Raycast(transform.position, Vector2.right * facingDirection, distFromWall, groundLayerMask).collider != null && movementDirection == facingDirection) {
+		//Make sure the player is fallign
+		if (Physics2D.Raycast(transform.position, Vector2.right * facingDirection, distFromWall, groundLayerMask).collider != null && rb.velocity.y <= -0.5f) {
 			isWallSliding = true;
 			GetComponent<SpriteRenderer>().color = Color.blue;
 			return -facingDirection;

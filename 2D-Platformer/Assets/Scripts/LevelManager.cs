@@ -14,6 +14,8 @@ public class LevelManager : MonoBehaviour
 	[SerializeField] Vector2 scores;
 	[SerializeField] GameObject[] spawnPoints;
 	[SerializeField] [Range(0, 3)] float resetTime = 1;
+
+	private bool isRestartLocked = false;
 	private List<int> usedSpawnIndexes;
 
     // Start is called before the first frame update
@@ -25,6 +27,7 @@ public class LevelManager : MonoBehaviour
 		usedSpawnIndexes.Clear();
 		StartGame();
     }
+
 
 	private void StartGame() {
 		//Spawn player
@@ -40,6 +43,8 @@ public class LevelManager : MonoBehaviour
 		Destroy(particles, 2f);
 		player1.GetComponent<PlayerController>().SetPlayerNumber("1");
 		player1.GetComponent<SpriteRenderer>().sprite = player1Sprite;
+
+		isRestartLocked = false;
 	}
 
 	private Transform FindSpawnPoint() {
@@ -69,13 +74,28 @@ public class LevelManager : MonoBehaviour
 		return scores;
 	}
 
-	public void ResetGame(string deadPlayerNumber) {
-		//Add score to the WINNING player
-		if (deadPlayerNumber == "") { scores.y++; }
+	public void PlayerKilled(string deadPlayerNumber) {
+		//Check if there is at least one player left
+		PlayerController[] players = FindObjectsOfType<PlayerController>();
+		if(players.Length - 1 <= 1 && isRestartLocked == false) {
+			//A victory or draw has happened, reset game
+			isRestartLocked = true;
+			StartCoroutine(ResetGame(deadPlayerNumber));
+		}
+	}
+
+	private IEnumerator ResetGame(string deadPlayerNumber) {
+		//Wait a bit
+		yield return new WaitForSeconds(1f);
+
+		//if there was a draw do nothing
+		PlayerController[] players = FindObjectsOfType<PlayerController>();
+		if (players.Length == 0);
+		//OR score to the WINNING player
+		else if (deadPlayerNumber == "") { scores.y++; }
 		else if (deadPlayerNumber == "1") { scores.x++; }
 
 		//Find each player and destroy them
-		PlayerController[] players = FindObjectsOfType<PlayerController>();
 		foreach (PlayerController player in players) {
 			Destroy(player.gameObject);
 		}
