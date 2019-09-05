@@ -6,6 +6,7 @@ public class SoundManager : MonoBehaviour
 {
 	[SerializeField] AudioClip bulletFireSound;
 	[SerializeField] AudioClip wallHitSound;
+	[SerializeField] AudioClip warpSound;
 
 	private AudioSource audioSource;
 
@@ -23,9 +24,7 @@ public class SoundManager : MonoBehaviour
 		audioSource.PlayOneShot(wallHitSound, 0.7f);
 	}
 
-	// Update is called once per frame
-	void Update()
-    {
-        
-    }
+	public void PlayWarpSound() {
+		audioSource.PlayOneShot(warpSound, 0.45f);
+	}
 }

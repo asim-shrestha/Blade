@@ -4,7 +4,6 @@ public class Bullet : MonoBehaviour
 {
 	[SerializeField] float bulletSpeed = 5;
 	[SerializeField] GameObject bulletParticles;
-
 	private Rigidbody2D rb;
 
     // Start is called before the first frame update
@@ -20,6 +19,9 @@ public class Bullet : MonoBehaviour
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {
+		//Check if it is colliding with bullets from the same player
+		if(collision.tag == this.tag) { return; }
+
 		//Add camera shake
 		FindObjectOfType<CameraController>().StartCameraShake();
 

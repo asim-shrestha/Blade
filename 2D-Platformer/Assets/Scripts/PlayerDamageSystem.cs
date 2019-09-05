@@ -44,10 +44,11 @@ public class PlayerDamageSystem : MonoBehaviour
 		//Calculate where the bullet should be fired
 		Vector3 firePosition = new Vector3(firePoint.position.x, firePoint.position.y);
 
-		//Fire bullet and set direction
+		//Fire bullet and set direction / tag
 		bulletsUsed++;
 		GameObject bulletClone = Instantiate(bullet, firePosition, transform.rotation);
-		bulletClone.transform.localScale = new Vector3(direction, 1, 1);
+		bulletClone.transform.localScale = new Vector3(direction, 1, 1);    //Make the bullet face the right direction
+		bulletClone.tag = "bullet" + playerNumber;		//Show which player shot the bullet
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {

@@ -80,6 +80,12 @@ public class LevelManager : MonoBehaviour
 			Destroy(player.gameObject);
 		}
 
+		//Find any bullets remaining in the game and destroy them
+		Bullet[] bullets = FindObjectsOfType<Bullet>();
+		foreach (Bullet bullet in bullets) {
+			Destroy(bullet.gameObject);
+		}
+
 		//Reset spawn points list
 		usedSpawnIndexes.Clear();
 

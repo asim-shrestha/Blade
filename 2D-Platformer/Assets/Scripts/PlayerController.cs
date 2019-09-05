@@ -210,8 +210,13 @@ public class PlayerController : MonoBehaviour {
 		//Make sure nothing is in the way if we are warping
 		if (Physics2D.Raycast(transform.position, Vector2.right * facingDirection, rayDistance, groundLayerMask).collider == null) {
 			warpCount++;
+			//Warp player
 			transform.position = new Vector2(transform.position.x + (warpDistance * facingDirection) , transform.position.y);
+
+			//Make warp sound
+			FindObjectOfType<SoundManager>().PlayWarpSound();
 		}
+
 	}
 
 	private void MovementLock(int disabledDirection) {
