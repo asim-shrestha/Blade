@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] bool isWallSliding = false;
 	[SerializeField] bool isCrouching = false;
 
+
 	private Rigidbody2D rb;
 	private int groundLayerMask;
 
@@ -114,7 +115,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		//Make player face the right direction
-		transform.localScale = new Vector3(facingDirection, 1, 1);
+		transform.localScale = new Vector3(facingDirection, transform.localScale.y, 1);
 	}
 
 	//Runs every physics step

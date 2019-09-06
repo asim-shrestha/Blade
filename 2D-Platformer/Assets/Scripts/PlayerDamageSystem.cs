@@ -15,6 +15,9 @@ public class PlayerDamageSystem : MonoBehaviour
 	[SerializeField] int damageTaken = 0;
 	[SerializeField] int damagePerBullet = 1;
 
+	[Header("Squash System")]
+	[SerializeField] public bool isSquashed = false;
+
 	private PlayerController pc;
 	private string playerNumber = "";
 	private int direction = 0;
@@ -57,7 +60,11 @@ public class PlayerDamageSystem : MonoBehaviour
 			if (collision.contacts[0].normal.y <= 0 && collision.gameObject.GetComponent<Rigidbody2D>().velocity.y < 0) {
 				//Give the stomper some upward force
 				collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 10, ForceMode2D.Impulse);
-				HandleDeath();
+
+				//Squash sprite and disable damage
+				transform.localScale = new Vector3(transform.localScale.x, 0.25f, 1);  //Squashes the player
+				HandleDeath(false);
+				enabled = false;	//Disable damage system
 			}
 		}
 	}
@@ -66,7 +73,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		//Add damage taken and check if the player is dead
 		damageTaken++;
 		if (damageTaken >= totalHealth) {
-			HandleDeath();
+			HandleDeath(true);
 		}
 
 		// Player isn't dead, play hit animation
@@ -76,7 +83,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		}
 	}
 
-	private void HandleDeath() {
+	private void HandleDeath(bool isDestroyed) {
 		//Find the level manager and tell it to reset the game
 		LevelManager lm = FindObjectOfType<LevelManager>();
 		lm.PlayerKilled(playerNumber);
@@ -84,7 +91,7 @@ public class PlayerDamageSystem : MonoBehaviour
 		//Play sound
 		FindObjectOfType<SoundManager>().PlayWallHitSound();
 		//Destroy self
-		Destroy(this.gameObject);
+		if (isDestroyed) { Destroy(this.gameObject); }
 	}
 
 	IEnumerator HitAnimation() {
